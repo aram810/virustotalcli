@@ -1,0 +1,39 @@
+[GLOBAL]
+pants_version = "2.21.0"
+backend_packages.add = [
+  "pants.backend.build_files.fmt.black",
+  "pants.backend.python",
+  "pants.backend.python.lint.docformatter",
+  "pants.backend.python.lint.black",
+  "pants.backend.python.lint.flake8",
+  "pants.backend.python.lint.isort",
+  "pants.backend.python.typecheck.mypy",
+]
+
+[anonymous-telemetry]
+enabled = true
+repo_id = "3B1D361B-E9F1-49A8-B761-03DCC41FD58E"
+
+[source]
+root_patterns = ["/"]
+
+[python]
+interpreter_constraints = ["CPython==3.11.*"]
+
+enable_resolves = true
+
+resolves = { python-default = "python-default.lock"}
+
+[python-infer]
+use_rust_parser = true
+
+[pytest]
+args=["-vv"]
+requirements = [
+  "pytest",
+  "pytest-asyncio",
+  "pytest-icdiff",
+  "pytest-mock",
+]
+config = "pyproject.toml"
+install_from_resolve = "python-default"

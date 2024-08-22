@@ -50,4 +50,4 @@ async def write_analysis_results(
     output_path: pathlib.Path, results: models.AnalysisResults
 ) -> None:
     async with aiofiles.open(output_path, "w") as file:
-        await file.write(results.model_dump_json(indent=4))
+        await file.write(results.model_dump_json(indent=4, by_alias=True))

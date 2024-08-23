@@ -15,6 +15,7 @@ _logger = structlog.get_logger(__name__)
 async def _make_orchestrator(
     api_key: str,
     stack: contextlib.AsyncExitStack,
+    group_max_size: int,
 ) -> client.VirusTotalClientOrchestrator:
     return client.VirusTotalClientOrchestrator(
         client=client.VirusTotalClient(
@@ -25,6 +26,7 @@ async def _make_orchestrator(
             ),
             api_key=api_key,
         ),
+        group_max_size=group_max_size,
     )
 
 
@@ -82,9 +84,10 @@ async def _lookup_handler(
 async def url_lookup_handler(
     source: pathlib.Path,
     api_key: str,
+    group_max_size: int,
 ) -> None:
     async with contextlib.AsyncExitStack() as stack:
-        api_orchestrator = await _make_orchestrator(api_key, stack)
+        api_orchestrator = await _make_orchestrator(api_key, stack, group_max_size)
 
         await _lookup_handler(
             source=source,
@@ -96,9 +99,10 @@ async def url_lookup_handler(
 async def ip_lookup_handler(
     source: pathlib.Path,
     api_key: str,
+    group_max_size: int,
 ) -> None:
     async with contextlib.AsyncExitStack() as stack:
-        api_orchestrator = await _make_orchestrator(api_key, stack)
+        api_orchestrator = await _make_orchestrator(api_key, stack, group_max_size)
 
         await _lookup_handler(
             source=source,

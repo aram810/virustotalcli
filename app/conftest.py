@@ -36,4 +36,5 @@ def orchestrator(
 ) -> client.VirusTotalClientOrchestrator:
     return client.VirusTotalClientOrchestrator(
         client=api_client,
+        group_max_size=2,
     )

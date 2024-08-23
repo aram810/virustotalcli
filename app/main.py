@@ -1,6 +1,8 @@
 import asyncio
+import functools
 import pathlib
-from collections.abc import Coroutine
+from collections.abc import Callable, Coroutine
+from typing import Any
 
 import click
 import structlog
@@ -8,6 +10,29 @@ import structlog
 from app import handlers, logger
 
 _logger = structlog.get_logger(__name__)
+
+
+def common_options(func: Callable[..., Any]) -> Callable[..., Any]:
+    decorated_func = click.option(
+        "--group-max-size",
+        required=False,
+        default=4,
+        show_default=True,
+        type=click.IntRange(min=1, max=50),
+    )(func)
+    decorated_func = click.option("--api-key", required=True)(decorated_func)
+    decorated_func = click.option(
+        "--source",
+        "-s",
+        type=click.Path(path_type=pathlib.Path),
+        required=True,
+    )(decorated_func)
+
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs) -> Callable[..., Any]:
+        return decorated_func(*args, **kwargs)
+
+    return wrapper
 
 
 def _run_loop_handle_exceptions(main: Coroutine[None, None, None], debug: bool) -> None:
@@ -32,34 +57,26 @@ def cli(ctx: click.Context, debug: bool) -> None:
     ctx.obj["debug"] = debug
 
 
-@click.option("--api-key", required=True)
-@click.option(
-    "--source",
-    "-s",
-    type=click.Path(path_type=pathlib.Path),
-    required=True,
-)
+@common_options
 @cli.command()
 @click.pass_context
-def lookup_ips(ctx: click.Context, source: pathlib.Path, api_key: str):
+def lookup_ips(
+    ctx: click.Context, source: pathlib.Path, api_key: str, group_max_size: int
+):
     _run_loop_handle_exceptions(
-        main=handlers.ip_lookup_handler(source, api_key),
+        main=handlers.ip_lookup_handler(source, api_key, group_max_size),
         debug=ctx.obj["debug"],
     )
 
 
-@click.option("--api-key", required=True)
-@click.option(
-    "--source",
-    "-s",
-    type=click.Path(path_type=pathlib.Path),
-    required=True,
-)
+@common_options
 @cli.command()
 @click.pass_context
-def lookup_urls(ctx: click.Context, source: pathlib.Path, api_key: str):
+def lookup_urls(
+    ctx: click.Context, source: pathlib.Path, api_key: str, group_max_size: int
+):
     _run_loop_handle_exceptions(
-        main=handlers.url_lookup_handler(source, api_key),
+        main=handlers.url_lookup_handler(source, api_key, group_max_size),
         debug=ctx.obj["debug"],
     )
 

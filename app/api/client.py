@@ -52,10 +52,9 @@ class VirusTotalClient:
 
 
 class VirusTotalClientOrchestrator:
-    _group_max_size: int = 2
-
-    def __init__(self, client: VirusTotalClient) -> None:
+    def __init__(self, client: VirusTotalClient, group_max_size: int) -> None:
         self._client = client
+        self._group_max_size = group_max_size
         self._logger = structlog.get_logger(__name__)
 
     async def lookup_ips(self, ips: Sequence[str]) -> list[models.LookupResponse]:

@@ -1,0 +1,16 @@
+{
+  "results": [
+    {
+      "Identifier": "127.0.0.1",
+      "Type": "IP_ADDRESS",
+      "LastAnalysisTime": "2024-08-22T13:25:08",
+      "IsMalicious": false
+    },
+    {
+      "Identifier": "127.0.0.2",
+      "Type": "IP_ADDRESS",
+      "LastAnalysisTime": "2024-08-22T15:38:44",
+      "IsMalicious": true
+    }
+  ]
+}

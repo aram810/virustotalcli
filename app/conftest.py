@@ -23,18 +23,18 @@ async def http_client() -> AsyncIterator[httpx.AsyncClient]:
 
 
 @pytest.fixture()
-def api_client(http_client: httpx.AsyncClient) -> client.VirusTotalClient:
-    return client.VirusTotalClient(
+def url_lookup_client(http_client: httpx.AsyncClient) -> client.VirusTotalClient:
+    return client.VirusTotalUrlLookupClient(
         http_client=http_client,
         api_key="",
     )
 
 
 @pytest.fixture()
-def orchestrator(
-    api_client: client.VirusTotalClient,
+def url_lookup_orchestrator(
+    url_lookup_client: client.VirusTotalUrlLookupClient,
 ) -> client.VirusTotalClientOrchestrator:
     return client.VirusTotalClientOrchestrator(
-        client=api_client,
+        client=url_lookup_client,
         group_max_size=2,
     )

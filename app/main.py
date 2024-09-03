@@ -1,7 +1,6 @@
-import asyncio
 import functools
 import pathlib
-from collections.abc import Callable, Coroutine
+from collections.abc import Callable
 from typing import Any
 
 import click
@@ -35,19 +34,6 @@ def common_options(func: Callable[..., Any]) -> Callable[..., Any]:
     return wrapper
 
 
-def _run_loop_handle_exceptions(main: Coroutine[None, None, None], debug: bool) -> None:
-    try:
-        asyncio.run(
-            main=main,
-            debug=debug,
-        )
-    except Exception as ex:
-        _logger.exception(
-            "An unhandled exception occurred",
-        )
-        raise SystemExit(1) from ex
-
-
 @click.option("--debug/--no-debug", default=False)
 @click.group()
 @click.pass_context
@@ -62,8 +48,8 @@ def cli(ctx: click.Context, debug: bool) -> None:
 @click.pass_context
 def lookup_ips(
     ctx: click.Context, source: pathlib.Path, api_key: str, group_max_size: int
-):
-    _run_loop_handle_exceptions(
+) -> None:
+    handlers.run_loop_handle_exceptions(
         main=handlers.ip_lookup_handler(source, api_key, group_max_size),
         debug=ctx.obj["debug"],
     )
@@ -74,8 +60,8 @@ def lookup_ips(
 @click.pass_context
 def lookup_urls(
     ctx: click.Context, source: pathlib.Path, api_key: str, group_max_size: int
-):
-    _run_loop_handle_exceptions(
+) -> None:
+    handlers.run_loop_handle_exceptions(
         main=handlers.url_lookup_handler(source, api_key, group_max_size),
         debug=ctx.obj["debug"],
     )

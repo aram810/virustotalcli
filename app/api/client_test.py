@@ -12,7 +12,7 @@ logger.configure_logger(False)
 
 async def test_stat_is_readable(
     httpx_mock: pytest_httpx.HTTPXMock,
-    api_client: client.VirusTotalClient,
+    url_lookup_client: client.VirusTotalClient,
 ) -> None:
     httpx_mock.add_response(
         url="https://www.virustotal.com/api/v3/urls/ZmIuY29t",
@@ -20,7 +20,7 @@ async def test_stat_is_readable(
         json=await conftest.load_json_fixture("app/api/fixtures/good_url_lookup.json"),
     )
 
-    response = await api_client.lookup_url("fb.com")
+    response = await url_lookup_client.lookup("fb.com")
 
     assert isinstance(response, models.LookupResponse)
     assert isinstance(
@@ -31,7 +31,7 @@ async def test_stat_is_readable(
 
 async def test_error_response_raises(
     httpx_mock: pytest_httpx.HTTPXMock,
-    api_client: client.VirusTotalClient,
+    url_lookup_client: client.VirusTotalClient,
 ) -> None:
     httpx_mock.add_response(
         url="https://www.virustotal.com/api/v3/urls/ZmIuY29t",
@@ -39,13 +39,13 @@ async def test_error_response_raises(
     )
 
     with pytest.raises(httpx.HTTPError):
-        await api_client.lookup_url("fb.com")
+        await url_lookup_client.lookup("fb.com")
 
 
 async def test_orchestrator_logs_on_failure(
     httpx_mock: pytest_httpx.HTTPXMock,
     caplog: pytest.LogCaptureFixture,
-    orchestrator: client.VirusTotalClientOrchestrator,
+    url_lookup_orchestrator: client.VirusTotalClientOrchestrator,
 ) -> None:
     httpx_mock.add_response(
         url="https://www.virustotal.com/api/v3/urls/ZmIuY29t",
@@ -53,7 +53,7 @@ async def test_orchestrator_logs_on_failure(
     )
 
     with caplog.at_level(logging.INFO):
-        await orchestrator.lookup_urls(
+        await url_lookup_orchestrator.lookup(
             [
                 "fb.com",
             ]

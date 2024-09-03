@@ -5,8 +5,9 @@ import pydantic
 
 
 class _BaseModel(pydantic.BaseModel):
-    class Config:
-        extra = pydantic.Extra.allow
+    model_config = pydantic.ConfigDict(
+        extra="allow",
+    )
 
 
 class LastAnalysisStats(_BaseModel):

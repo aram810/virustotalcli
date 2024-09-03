@@ -2,31 +2,9 @@ import json
 import pathlib
 
 import aiofiles
-import validators
 
 from app import managers
-from app.readers import errors, filters, validator
-
-
-class IpValidator(validator.Validator):
-    def validate(self, identifier: str) -> None:
-        try:
-            validators.ipv6(identifier, r_ve=True)
-        except validators.ValidationError:
-            try:
-                validators.ipv4(identifier, r_ve=True)
-            except validators.ValidationError as ex:
-                raise ValueError from ex
-
-
-class UrlValidator(validator.Validator):
-    def validate(self, identifier: str) -> None:
-        try:
-            validators.url(
-                identifier, skip_ipv4_addr=True, skip_ipv6_addr=True, r_ve=True
-            )
-        except validators.ValidationError as ex:
-            raise ValueError from ex
+from app.readers import errors, filters
 
 
 class JsonFileReader(managers.IdentifierReader):

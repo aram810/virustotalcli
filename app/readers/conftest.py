@@ -1,13 +1,13 @@
 import pytest
 
-from app.readers import json_reader, validator
+from app.readers import validator
 
 
 @pytest.fixture()
 def ip_validator() -> validator.Validator:
-    return json_reader.IpValidator()
+    return validator.IpValidator()
 
 
 @pytest.fixture()
 def url_validator() -> validator.Validator:
-    return json_reader.UrlValidator()
+    return validator.UrlValidator()
